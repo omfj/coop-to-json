@@ -19,34 +19,34 @@ const { file } = data;
 
 const products = await parseReceipt(file);
 
-const namesPrompt = prompt("Names of participants");
+const namesPrompt = prompt("Navn på deltagere:");
 if (!namesPrompt) {
-  console.log("No names provided");
+  console.log("Ingen deltagere");
   Deno.exit(1);
 }
 
-const names = ["Shared", ...namesPrompt.split(",").map((name) => name.trim())];
+const names = ["Delt", ...namesPrompt.split(",").map((name) => name.trim())];
 
-const createPrompt = (product: string, price: number) => {
-  return `Who does ${product} (${price} kr) belong to? (0: Shared, ${names
-    .map((name, index) => `${index + 1}: ${name}`)
-    .join(", ")})`;
+const createBasicPrompt = (product: string, price: number) => {
+  return `Hvem har kjøpt ${product} (${price} kr)?`;
 };
 
 const longesPromptLength = products.reduce((acc, product) => {
-  const promptLength = createPrompt(product.name, product.price).length;
+  const promptLength = createBasicPrompt(product.name, product.price).length;
   return promptLength > acc ? promptLength : acc;
 }, 0);
 
 const belongsTo = (product: string, price: number) => {
   let id = null;
   while (!id) {
-    const q = `Who does ${product} (${price} kr) belong to?`;
+    const q = createBasicPrompt(product, price);
+    const padSize = longesPromptLength - q.length + 3;
     const n = `(${names
       .map((name, index) => `${index}: ${name}`)
-      .join(", ")})`.padStart(longesPromptLength - q.length, " ");
+      .join(", ")}):`;
+    const np = n.padStart(padSize + n.length, " ");
 
-    id = prompt(`${q}${n}`);
+    id = prompt(`${q}${np}`);
   }
 
   return id;
@@ -87,8 +87,8 @@ names
   .filter((_, i) => i !== 0)
   .forEach((name, index) => {
     console.log(
-      `${name}: ${(totals.individual[index] + totals.shared).toFixed(
+      `${name}: ${(totals.individual[index + 1] + totals.shared).toFixed(
         2
-      )} kr (individuelt: ${totals.individual[index].toFixed(2)} kr)`
+      )} kr (individuelt: ${totals.individual[index + 1].toFixed(2)} kr)`
     );
   });
