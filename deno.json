@@ -1,0 +1,10 @@
+{
+  "tasks": {
+  },
+  "imports": {
+    "@std/assert": "jsr:@std/assert@1",
+    "@std/cli": "jsr:@std/cli@^1.0.6",
+    "pdf-text-reader": "npm:pdf-text-reader@^5.1.0",
+    "zod": "npm:zod@^3.23.8"
+  }
+}
